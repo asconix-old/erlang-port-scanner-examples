@@ -5,6 +5,37 @@
   ping/2
 ]).
 
+incr(IPv4Addr) ->
+	{Val1, Val2, Val3, Val4} = IPv4Addr,
+	case Val4 < 255 of
+		true -> Out = integer_to_list(Val1) ++ "." ++ integer_to_list(Val2) ++ "." ++ integer_to_list(Val3) ++ "." ++ integer_to_list(Val4 + 1);
+		false -> case Val3 < 255 of
+			true -> Out = integer_to_list(Val1) ++ "." ++ integer_to_list(Val2) ++ "." ++ integer_to_list(Val3+1) ++ ".0";
+			false -> case Val2 < 255 of
+				true -> Out = integer_to_list(Val1) ++ "." ++ integer_to_list(Val2+1) ++ ".0.0";
+				false -> case Val1 < 255 of
+					true -> Out = integer_to_list(Val1+1) ++ ".0.0.0";
+					false -> Out = error
+				end
+			end
+		end
+	end,
+	Out.
+
+tokenize(IPv4Addr) ->
+	[Octet1, Octet2, Octet3, Octet4] = string:tokens(IPv4Addr, "."),
+    [{Val1,_},{Val2,_},{Val3,_},{Val4,_}] = [string:to_integer(Octet1), string:to_integer(Octet2), string:to_integer(Octet3), string:to_integer(Octet4)],
+    Ip = {Val1, Val2, Val3, Val4},
+    Ip.
+
+% Base case reached
+range(StartIp, StartIp) ->
+	ok;
+
+range(StartIp, EndIp) ->
+	IPv4Int = tokenize(StartIp),
+	range(incr(IPv4Int), EndIp).
+
 %%% -----------------------------------
 %%% One host, multiple ports
 %%% -----------------------------------
