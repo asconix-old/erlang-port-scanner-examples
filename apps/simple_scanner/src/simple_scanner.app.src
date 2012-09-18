@@ -1,0 +1,14 @@
+{application, simple_scanner, [
+    {description, "Simple TCP port scanner"},
+    {vsn, git},
+    {modules, []},
+    {registered, [simple_scanner_sup]},
+    {applications, [
+        kernel,
+        stdlib,
+        ibrowse
+    ]},
+    {mod, {simple_scanner, []}},
+    {env, []}
+]}.
+
